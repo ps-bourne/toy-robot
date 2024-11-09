@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Toy.Robot.Console.Const;
-using Toy.Robot.Console.Enum;
 using Toy.Robot.Console.Helpers;
 using Toy.Robot.Console.Services;
 
@@ -14,7 +13,7 @@ public class Program
 
     static void Main(string[] args)
     {
-        using var serviceProvider = ServiceHelper.BuildServicePrivider();
+        using var serviceProvider = StartupHelper.BuildServicePrivider();
         var robotService = serviceProvider.GetService<IRobotService>() ??
             throw new Exception();
 
@@ -22,7 +21,7 @@ public class Program
 
         while (!string.Equals(command, RobotCommand.Exit, StringComparison.InvariantCultureIgnoreCase))
         {
-            string line = System.Console.ReadLine() ?? string.Empty;
+            string line = System.Console.ReadLine()?.Trim() ?? string.Empty;
 
             string[] arguments = line.Split(' ');
 
@@ -31,7 +30,17 @@ public class Program
             switch (command.ToUpper())
             {
                 case RobotCommand.Place:
-                    robotService.Place(0, 0, RobotFace.North);
+                    int argumentsLength = arguments.Length;
+                    if (argumentsLength <= 1)
+                    { 
+                        break;
+                    }
+                    var position = StartupHelper.ExtractRobotPosition(arguments[argumentsLength - 1]);
+                    if (position == null)
+                    {
+                        break;
+                    }
+                    robotService.Place(position);
                     break;
                 case RobotCommand.Move:
                     robotService.Move();

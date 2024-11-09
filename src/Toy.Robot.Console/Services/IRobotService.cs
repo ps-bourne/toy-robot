@@ -1,10 +1,11 @@
 ﻿using Toy.Robot.Console.Enum;
+using Toy.Robot.Console.Models;
 
 namespace Toy.Robot.Console.Services;
 
 public interface IRobotService
 {
-    void Place(int x, int y, RobotFace face);
+    void Place(RobotPosition robotPosition);
 
     void Move();
 

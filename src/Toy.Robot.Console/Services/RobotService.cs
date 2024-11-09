@@ -1,31 +1,65 @@
-﻿using Toy.Robot.Console.Enum;
+﻿using Toy.Robot.Console.Const;
+using Toy.Robot.Console.Models;
 
 namespace Toy.Robot.Console.Services;
 
-public class RobotService: IRobotService
+public class RobotService : IRobotService
 {
-    public void Place(int x, int y, RobotFace face)
+    private readonly RobotPosition _robotPlace;
+
+    public RobotService(RobotPosition toyRobot)
     {
-        System.Console.WriteLine("Place command executed.");
+        _robotPlace = toyRobot;
+    }
+
+    public void Place(RobotPosition robotPosition)
+    {
+        _robotPlace.X = robotPosition.X;
+        _robotPlace.Y = robotPosition.Y;
+        _robotPlace.Face = robotPosition.Face;
     }
 
     public void Move()
     {
-        System.Console.WriteLine("Move command executed.");
+        switch (_robotPlace.Face)
+        {
+            case RobotFace.NORTH:
+                _robotPlace.Y++;
+                break;
+            case RobotFace.EAST:
+                _robotPlace.X++;
+                break;
+            case RobotFace.SOUTH:
+                if (_robotPlace.Y > 0)
+                {
+                    _robotPlace.Y--;
+                }
+                break;
+            case RobotFace.WEST:
+                if (_robotPlace.X > 0)
+                {
+                    _robotPlace.X--;
+                }
+                break;
+        }
     }
 
     public void Left()
     {
-        System.Console.WriteLine("Left command executed.");
+        int currentFace = (int)_robotPlace.Face;
+        int nextFace = (currentFace + 3) % 4;
+        _robotPlace.Face = (RobotFace)nextFace;
     }
 
     public void Right()
     {
-        System.Console.WriteLine("Right command executed.");
+        int currentFace = (int)_robotPlace.Face;
+        int nextFace = (currentFace + 1) % 4;
+        _robotPlace.Face = (RobotFace)nextFace;
     }
 
     public void Report()
     {
-        System.Console.WriteLine("Report command executed.");
+        System.Console.WriteLine($"Output: {_robotPlace.X}, {_robotPlace.Y}, {_robotPlace.Face}");
     }
 }
