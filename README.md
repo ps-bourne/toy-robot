@@ -22,17 +22,17 @@
     ```
 
 ## Usage
-
 1. Start the application:
     ```sh
-    dotnet run
+    dotnet run --project src/Toy.Robot.Console/
     ```
-2. Control the toy robot using following commands
-    - PLACE X,Y,F
-    - MOVE
-    - LEFT
-    - RIGHT
-    - REPORT
+2. Control the toy robot using the following commands:
+    - `PLACE X,Y,F`
+    - `MOVE`
+    - `LEFT`
+    - `RIGHT`
+    - `REPORT`
+3. Enter each command on a new line.
 
 ## Running Tests
 
@@ -42,21 +42,21 @@ dotnet test
 ```
 
 ## Example Input and Output:
-- a)----------------
+1. ----------------
 ```sh
 PLACE 0,0,NORTH
 MOVE
 REPORT
 Output: 0,1,NORTH
 ```
-- b)----------------
+2. ----------------
 ```sh
 PLACE 0,0,NORTH
 LEFT
 REPORT
 Output: 0,0,WEST
 ```
-- c)----------------
+3. ----------------
 ```sh
 PLACE 1,2,EAST
 MOVE
