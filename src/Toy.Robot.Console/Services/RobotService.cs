@@ -1,4 +1,5 @@
-﻿using Toy.Robot.Console.Const;
+﻿using System.ComponentModel.DataAnnotations;
+using Toy.Robot.Console.Const;
 using Toy.Robot.Console.Models;
 
 namespace Toy.Robot.Console.Services;
@@ -6,28 +7,49 @@ namespace Toy.Robot.Console.Services;
 public class RobotService : IRobotService
 {
     private readonly RobotPosition _robotPlace;
+    private readonly IConsoleService _consoleService;
 
-    public RobotService(RobotPosition toyRobot)
+    public RobotService(RobotPosition toyRobot, IConsoleService consoleService)
     {
         _robotPlace = toyRobot;
+        _consoleService = consoleService;
     }
 
     public void Place(RobotPosition robotPosition)
     {
+        bool isValidPosition = Validator.TryValidateObject(robotPosition, new ValidationContext(robotPosition), null, true);
+
+        if (!isValidPosition)
+        {
+            return;
+        }
+
         _robotPlace.X = robotPosition.X;
         _robotPlace.Y = robotPosition.Y;
         _robotPlace.Face = robotPosition.Face;
+
     }
 
     public void Move()
     {
+        if (!_robotPlace.IsOnTable)
+        {
+            return;
+        }
+
         switch (_robotPlace.Face)
         {
             case RobotFace.NORTH:
-                _robotPlace.Y++;
+                if (_robotPlace.Y < TableConst.MaxY)
+                {
+                    _robotPlace.Y++;
+                }
                 break;
             case RobotFace.EAST:
-                _robotPlace.X++;
+                if (_robotPlace.X < TableConst.MaxX)
+                {
+                    _robotPlace.X++;
+                }
                 break;
             case RobotFace.SOUTH:
                 if (_robotPlace.Y > 0)
@@ -44,22 +66,37 @@ public class RobotService : IRobotService
         }
     }
 
-    public void Left()
+    public void TurnLeft()
     {
-        int currentFace = (int)_robotPlace.Face;
+        if (!_robotPlace.IsOnTable)
+        {
+            return;
+        }
+
+        int currentFace = (int)_robotPlace.Face!;
         int nextFace = (currentFace + 3) % 4;
         _robotPlace.Face = (RobotFace)nextFace;
     }
 
-    public void Right()
+    public void TurnRight()
     {
-        int currentFace = (int)_robotPlace.Face;
+        if (!_robotPlace.IsOnTable)
+        {
+            return;
+        }
+
+        int currentFace = (int)_robotPlace.Face!;
         int nextFace = (currentFace + 1) % 4;
         _robotPlace.Face = (RobotFace)nextFace;
     }
 
-    public void Report()
+    public void PrintReport()
     {
-        System.Console.WriteLine($"Output: {_robotPlace.X}, {_robotPlace.Y}, {_robotPlace.Face}");
+        if (!_robotPlace.IsOnTable)
+        {
+            return;
+        }
+
+        _consoleService.WriteLine($"Output: {_robotPlace.X}, {_robotPlace.Y}, {_robotPlace.Face}");
     }
 }

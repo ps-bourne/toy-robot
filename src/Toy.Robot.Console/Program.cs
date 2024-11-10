@@ -13,14 +13,22 @@ public class Program
 
     static void Main(string[] args)
     {
-        using var serviceProvider = StartupHelper.BuildServicePrivider();
-        var robotService = serviceProvider.GetService<IRobotService>() ??
-            throw new Exception();
+        var services = new ServiceCollection();
+        services.AddRobotServices();
+        using var serviceProvider = services.BuildServiceProvider();
+
+        var robotService = serviceProvider.GetService<IRobotService>();
+        ArgumentNullException.ThrowIfNull(robotService);
+
+        var availableCommands = typeof(RobotCommand).GetFields().Select(f => f.Name);
+        System.Console.WriteLine($"Available commands: {string.Join(", ", availableCommands)}");
 
         string command = string.Empty;
 
         while (!string.Equals(command, RobotCommand.Exit, StringComparison.InvariantCultureIgnoreCase))
         {
+            System.Console.Write('>');
+
             string line = System.Console.ReadLine()?.Trim() ?? string.Empty;
 
             string[] arguments = line.Split(' ');
@@ -46,13 +54,13 @@ public class Program
                     robotService.Move();
                     break;
                 case RobotCommand.Left:
-                    robotService.Left();
+                    robotService.TurnLeft();
                     break;
                 case RobotCommand.Right:
-                    robotService.Right();
+                    robotService.TurnRight();
                     break;
                 case RobotCommand.Report:
-                    robotService.Report();
+                    robotService.PrintReport();
                     break;
                 case RobotCommand.Exit:
                     break;

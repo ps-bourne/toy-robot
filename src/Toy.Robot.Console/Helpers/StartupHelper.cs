@@ -7,18 +7,13 @@ namespace Toy.Robot.Console.Helpers;
 
 public static class StartupHelper
 {
-    public static ServiceProvider BuildServicePrivider()
+    public static void AddRobotServices(this ServiceCollection services)
     {
-        var services = new ServiceCollection();
         services.AddSingleton<IRobotService, RobotService>();
-        services.AddSingleton(new RobotPosition 
-        {
-            X = 0,
-            Y = 0,
-            Face = RobotFace.NORTH
-        });
 
-        return services.BuildServiceProvider();
+        services.AddSingleton(new RobotPosition());
+
+        services.AddSingleton<IConsoleService, ConsoleService>();
     }
 
     public static RobotPosition? ExtractRobotPosition(string stringArgument)
@@ -30,9 +25,9 @@ public static class StartupHelper
             return null;
         }
 
-        bool canParseX = uint.TryParse(placeParameters[0], out var x);
-        bool canParseY = uint.TryParse(placeParameters[1], out var y);
-        bool canParseFace = Enum.TryParse<RobotFace>(placeParameters[2], out var face);
+        bool canParseX = int.TryParse(placeParameters[0].Trim(), out var x);
+        bool canParseY = int.TryParse(placeParameters[1].Trim(), out var y);
+        bool canParseFace = Enum.TryParse<RobotFace>(placeParameters[2].Trim(), out var face);
 
         if (!canParseX || !canParseY || !canParseFace)
         {

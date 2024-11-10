@@ -1,12 +1,20 @@
-﻿using Toy.Robot.Console.Const;
+﻿using System.ComponentModel.DataAnnotations;
+using Toy.Robot.Console.Const;
 
 namespace Toy.Robot.Console.Models;
 
 public record RobotPosition
 {
-    public uint X { get; set; }
+    [Required]
+    [Range(0,TableConst.MaxX)]
+    public int? X { get; set; }
 
-    public uint Y { get; set; }
+    [Required]
+    [Range(0,TableConst.MaxY)]
+    public int? Y { get; set; }
 
-    public RobotFace Face { get; set; }
+    [Required]
+    public RobotFace? Face { get; set; }
+
+    public bool IsOnTable => X.HasValue && Y.HasValue && Face.HasValue;
 }

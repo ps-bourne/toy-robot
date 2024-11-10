@@ -1,5 +1,4 @@
-﻿using Toy.Robot.Console.Enum;
-using Toy.Robot.Console.Models;
+﻿using Toy.Robot.Console.Models;
 
 namespace Toy.Robot.Console.Services;
 
@@ -9,9 +8,9 @@ public interface IRobotService
 
     void Move();
 
-    void Left();
+    void TurnLeft();
 
-    void Right();
+    void TurnRight();
 
-    void Report();
+    void PrintReport();
 }
