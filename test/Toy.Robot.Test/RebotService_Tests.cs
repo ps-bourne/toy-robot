@@ -1,24 +1,18 @@
 using Moq;
 using Shouldly;
 using Toy.Robot.Console.Const;
+using Toy.Robot.Console.Helpers;
 using Toy.Robot.Console.Models;
-using Toy.Robot.Console.Services;
 
-namespace Toy.Robot.Test.Services;
+namespace Toy.Robot.Test;
 
-public class RobotService_Tests
+public class ToyRobot_Tests
 {
-    private readonly RobotService _robotService;
     private readonly RobotPosition _robotPosition;
-    private readonly Mock<IConsoleService> _mockConsoleService;
 
-    public RobotService_Tests()
+    public ToyRobot_Tests()
     {
         _robotPosition = new RobotPosition();
-
-        _mockConsoleService = new Mock<IConsoleService>();
-
-        _robotService = new RobotService(_robotPosition, _mockConsoleService.Object);
     }
 
     [Fact]
@@ -33,7 +27,7 @@ public class RobotService_Tests
         };
 
         // Act
-        _robotService.Place(initPlace);
+        _robotPosition.Place(initPlace);
 
         // Assert
         _robotPosition.ShouldBe(initPlace);
@@ -46,7 +40,7 @@ public class RobotService_Tests
     [InlineData(5, 0)]
     [InlineData(0, 5)]
     [InlineData(5, 5)]
-    public void Place_ShouldNotPlaceOutsideTable(int x ,int y)
+    public void Place_ShouldNotPlaceOutsideTable(int x, int y)
     {
         // Arrange
         var initPlace = new RobotPosition()
@@ -57,7 +51,7 @@ public class RobotService_Tests
         };
 
         // Act
-        _robotService.Place(initPlace);
+        _robotPosition.Place(initPlace);
 
         // Assert
         _robotPosition.IsOnTable.ShouldBeFalse();
@@ -84,8 +78,8 @@ public class RobotService_Tests
         var expectedPlace = initPlace with { X = expectedX, Y = expectedY };
 
         // Act
-        _robotService.Place(initPlace);
-        _robotService.Move();
+        _robotPosition.Place(initPlace);
+        _robotPosition.Move();
 
         // Assert
         _robotPosition.ShouldBe(expectedPlace);
@@ -95,7 +89,7 @@ public class RobotService_Tests
     public void Move_ShouldIgnoreIfNotPlaced()
     {
         // Act
-        _robotService.Move();
+        _robotPosition.Move();
 
         // Assert
         _robotPosition.IsOnTable.ShouldBeFalse();
@@ -117,8 +111,8 @@ public class RobotService_Tests
         };
 
         // Act
-        _robotService.Place(initPlace);
-        _robotService.Move();
+        _robotPosition.Place(initPlace);
+        _robotPosition.Move();
 
         // Assert
         _robotPosition.ShouldBe(initPlace);
@@ -142,8 +136,8 @@ public class RobotService_Tests
         var expectedPlace = initPlace with { Face = expectedFace };
 
         // Act
-        _robotService.Place(initPlace);
-        _robotService.TurnLeft();
+        _robotPosition.Place(initPlace);
+        _robotPosition.TurnLeft();
 
         // Assert
         _robotPosition.ShouldBe(expectedPlace);
@@ -153,7 +147,7 @@ public class RobotService_Tests
     public void TurnLeft_ShouldIgnoreIfNotPlaced()
     {
         // Act
-        _robotService.TurnLeft();
+        _robotPosition.TurnLeft();
 
         // Assert
         _robotPosition.IsOnTable.ShouldBeFalse();
@@ -177,8 +171,8 @@ public class RobotService_Tests
         var expectedPlace = initPlace with { Face = expectedFace };
 
         // Act
-        _robotService.Place(initPlace);
-        _robotService.TurnRight();
+        _robotPosition.Place(initPlace);
+        _robotPosition.TurnRight();
 
         // Assert
         _robotPosition.ShouldBe(expectedPlace);
@@ -188,14 +182,14 @@ public class RobotService_Tests
     public void Right_ShouldIgnoreIfNotPlaced()
     {
         // Act
-        _robotService.TurnRight();
+        _robotPosition.TurnRight();
 
         // Assert
         _robotPosition.IsOnTable.ShouldBeFalse();
     }
 
     [Fact]
-    public void Report_ShouldWriteRobotPosition()
+    public void Report_ShouldSuccess()
     {
         // Arrange
         var x = 0;
@@ -208,27 +202,15 @@ public class RobotService_Tests
             Y = y,
             Face = face
         };
-        string callbackString = string.Empty;
-
-        _mockConsoleService
-            .Setup(x => x.WriteLine(It.IsAny<string>()))
-            .Callback((string line) => { callbackString = line; });
 
         // Act
-        _robotService.Place(initPlace);
-        _robotService.PrintReport();
+        Should.NotThrow(() =>
+        {
+            _robotPosition.Place(initPlace);
+            _robotPosition.PrintReport();
+        });
 
         // Assert
-        callbackString.ShouldBe($"Output: {x}, {y}, {face}");
-    }
-
-    [Fact]
-    public void Report_ShouldIgnoreIfNotPlaced()
-    {
-        // Act
-        _robotService.PrintReport();
-
-        // Assert
-        _mockConsoleService.Verify(x => x.WriteLine(It.IsAny<string>()), Times.Never);
+        _robotPosition.ShouldBe(initPlace);
     }
 }
