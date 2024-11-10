@@ -49,15 +49,17 @@ dotnet test
 PLACE 0,0,NORTH
 MOVE
 REPORT
-Output: 0,1,NORTH
 ```
+Output: 0,1,NORTH
+
 2. ----------------
 ```sh
 PLACE 0,0,NORTH
 LEFT
 REPORT
-Output: 0,0,WEST
 ```
+Output: 0,0,WEST
+
 3. ----------------
 ```sh
 PLACE 1,2,EAST
@@ -66,5 +68,5 @@ MOVE
 LEFT
 MOVE
 REPORT
-Output: 3,3,NORT
 ```
+Output: 3,3,NORT
