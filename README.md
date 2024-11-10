@@ -32,7 +32,9 @@
     - `LEFT`
     - `RIGHT`
     - `REPORT`
+    - `EXIT`
 3. Enter each command on a new line.
+4. To exit the program, use the `EXIT` command or press `Ctrl+C`.
 
 ## Running Tests
 
